@@ -19,8 +19,12 @@ struct ContentView: View {
     @State private var stopPressing = false
     @State private var stopCounter = 0.0
     @State private var completed = false
+    @State private var focusTypeSelectionModal = false
     let pomodoroTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let breakTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    var focusType = ["focus", "study", "exercise", "read"]
+    @State private var selectedFocusType = "focus"
     
     var body: some View {
         ZStack {
@@ -34,7 +38,14 @@ struct ContentView: View {
                         .foregroundStyle(.white)
                 }
                 TimerView(pomodoroTime: !completed ? $pomodoroTime : $breakTime, timeRemaining: !completed ? $timeRemaining : $breakTimeRemaining, focused: $focused)
-                
+                if !focused {
+                    Button {
+                    focusTypeSelectionModal.toggle()
+                } label: {
+                    Text(selectedFocusType)
+                        .foregroundColor(.white)
+                }
+                }
                 if (!focused) {
                     Spacer()
                 }
@@ -49,6 +60,7 @@ struct ContentView: View {
                         }
                     } label: {
                         PomodoroButton(buttonText: "start focus")
+                            .sensoryFeedback(.start, trigger: focused == true)
                     }
                     .padding()
                 } else {
@@ -69,6 +81,8 @@ struct ContentView: View {
                         Text("hold to stop focus")
                             .foregroundStyle(stopPressing ? .white : .SECONDARY)
                             .padding(.top)
+                            .font(.system(size: stopPressing ? 14 : 16))
+                            .sensoryFeedback(.stop, trigger: focused == false)
                     } else {
                         Button {
                             withAnimation {
@@ -84,6 +98,17 @@ struct ContentView: View {
                 }
             }
         }
+        .sheet(isPresented: $focusTypeSelectionModal) {
+            VStack {
+                Picker("Please choose a color", selection: $selectedFocusType) {
+                     ForEach(focusType, id: \.self) {
+                         Text($0)
+                     }
+                 }
+            }
+                .frame(width: .infinity, height: .infinity)
+                .backgroundStyle(.black)
+               }
         .onReceive(pomodoroTimer) { time in
             guard focused else { return }
             if timeRemaining > 0 {
@@ -113,7 +138,9 @@ struct ContentView: View {
         } onPressingChanged: { inProgress in
             if focused {
                 if (inProgress) {
-                    stopPressing = true
+                    withAnimation {
+                        stopPressing = true
+                    }
                     Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                         if !stopPressing  {
                             timer.invalidate()
