@@ -42,7 +42,7 @@ struct ContentView: View {
                     Button {
                     focusTypeSelectionModal.toggle()
                 } label: {
-                    Text(selectedFocusType)
+                    Text(selectedFocusType + " >")
                         .foregroundColor(.white)
                 }
                 }
@@ -99,6 +99,8 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $focusTypeSelectionModal) {
+            ZStack {
+                Color.BACKGROUND.edgesIgnoringSafeArea(.all)
             VStack {
                 Picker("Please choose a color", selection: $selectedFocusType) {
                      ForEach(focusType, id: \.self) {
@@ -106,9 +108,10 @@ struct ContentView: View {
                      }
                  }
             }
-                .frame(width: .infinity, height: .infinity)
-                .backgroundStyle(.black)
-               }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+            }
+        }
         .onReceive(pomodoroTimer) { time in
             guard focused else { return }
             if timeRemaining > 0 {
