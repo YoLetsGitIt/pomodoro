@@ -11,17 +11,11 @@ struct ContentView: View {
     
     @GestureState private var isDetectingLongPress = false
     
-    @State private var pomodoroTime = 1500
-    @State private var timeRemaining = 1500
-    @State private var breakTime = 300
-    @State private var breakTimeRemaining = 300
     @State private var focused = false
     @State private var stopPressing = false
     @State private var stopCounter = 0.0
     @State private var completed = false
-    @State private var focusTypeSelectionModal = false
-    let pomodoroTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    let breakTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var showFocusTypePickerSheet = false
     
     var focusType = ["focus", "study", "exercise", "read"]
     @State private var selectedFocusTypeIndex = 0
@@ -37,11 +31,11 @@ struct ContentView: View {
                         .padding(.bottom)
                         .foregroundStyle(.white)
                 }
-                TimerView(pomodoroTime: !completed ? $pomodoroTime : $breakTime, timeRemaining: !completed ? $timeRemaining : $breakTimeRemaining, focused: $focused)
+                TimerView(focused: $focused, completed: $completed)
                 if !focused {
                     Button {
                         withAnimation {
-                            focusTypeSelectionModal.toggle()
+                            showFocusTypePickerSheet.toggle()
                         }
                 } label: {
                     Text(focusType[selectedFocusTypeIndex] + " >")
@@ -92,8 +86,6 @@ struct ContentView: View {
                             withAnimation {
                                 completed = false
                                 focused = false
-                                timeRemaining = pomodoroTime
-                                breakTimeRemaining = breakTime
                             }
                         } label: {
                             PomodoroButton(buttonText: "end break")
@@ -102,58 +94,9 @@ struct ContentView: View {
                 }
             }
         }
-        .blur(radius: focusTypeSelectionModal ? 20 : 0)
-        .sheet(isPresented: $focusTypeSelectionModal) {
-            ZStack {
-                Color.BACKGROUND.edgesIgnoringSafeArea(.all)
-            VStack {
-                Spacer()
-                Text("Select focus type")
-                    .foregroundStyle(.white)
-                Spacer()
-                LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 150))
-                ], spacing: 20) {
-                    ForEach(focusType.indices, id: \.self) { index in
-                        MultiPicker(pickerText: focusType[index], selected: index == selectedFocusTypeIndex, onPress: {
-                                withAnimation {
-                                    selectedFocusTypeIndex = index
-                                    focusTypeSelectionModal.toggle()
-                                }
-                            })
-                    }
-                }
-                .padding(.horizontal)
-                Spacer()
-            }
-            .presentationDetents([.height(250)])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(.ultraThickMaterial)
-            }
-        }
-        .onReceive(pomodoroTimer) { time in
-            guard focused else { return }
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                // pomodoro completed logic
-                withAnimation {
-                    completed = true
-                }
-            }
-        }
-        .onReceive(breakTimer) { time in
-            guard completed else { return }
-            if breakTimeRemaining > 0 {
-                breakTimeRemaining -= 1
-            } else {
-                withAnimation {
-                    completed = false
-                    focused = false
-                    timeRemaining = pomodoroTime
-                    breakTimeRemaining = breakTime
-                }
-            }
+        .blur(radius: showFocusTypePickerSheet ? 20 : 0)
+        .sheet(isPresented: $showFocusTypePickerSheet) {
+            FocusTypePickerSheet(focusType: focusType, selectedFocusTypeIndex: $selectedFocusTypeIndex, showFocusTypePickerSheet: $showFocusTypePickerSheet)
         }
         .onLongPressGesture(minimumDuration: 5) {
             
@@ -173,7 +116,6 @@ struct ContentView: View {
                             withAnimation {
                                 focused = false
                                 stopPressing = false
-                                timeRemaining = pomodoroTime
                                 stopCounter = 0
                             }
                             timer.invalidate() // invalidate the timer

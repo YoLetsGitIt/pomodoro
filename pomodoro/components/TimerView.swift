@@ -9,9 +9,21 @@ import SwiftUI
 
 struct TimerView: View {
     
-    @Binding var pomodoroTime: Int
-    @Binding var timeRemaining: Int
     @Binding var focused: Bool
+    @Binding var completed: Bool
+    
+    @State var focusTime: Int = 1500
+    @State private var breakTime = 300
+    @State var timeRemaining: Int
+    
+    init(focused: Binding<Bool>, completed: Binding<Bool>) {
+        self._focused = focused
+        self._completed = completed
+        self.timeRemaining = completed.wrappedValue ? 300 : 1500
+    }
+    
+    let pomodoroTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let breakTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     public func msFrom() -> (Int, Int) {
         return ((timeRemaining % 3600) / 60, (timeRemaining % 3600) % 60)
@@ -56,7 +68,7 @@ struct TimerView: View {
             }
             if focused {
                 Circle()
-                    .trim(from: 0, to: CGFloat((Float(pomodoroTime) - Float(timeRemaining)) / Float(pomodoroTime)))
+                    .trim(from: 0, to: CGFloat((Float(completed ? breakTime : focusTime) - Float(timeRemaining)) / Float(completed ? breakTime : focusTime)))
                     .stroke(
                         .white,
                         style: StrokeStyle(
@@ -66,7 +78,7 @@ struct TimerView: View {
                     )
                     .rotationEffect(.degrees(-90))
                 // 1
-                    .animation(.easeOut, value: CGFloat((Float(pomodoroTime) - Float(timeRemaining)) / Float(pomodoroTime)))
+                    .animation(.easeOut, value: CGFloat((Float(completed ? breakTime : focusTime) - Float(timeRemaining)) / Float(completed ? breakTime : focusTime)))
             }
             Text("\(convertDurationToString())")
                 .foregroundStyle(.white)
@@ -76,14 +88,44 @@ struct TimerView: View {
                             relativeTo: .largeTitle))
         }
         .padding(.horizontal, 32)
+        .onChange(of: focused) {
+            if !focused {
+                timeRemaining = focusTime
+            }
+        }
+        .onReceive(pomodoroTimer) { time in
+            guard focused else { return }
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            } else {
+                // pomodoro completed logic
+                withAnimation {
+                    completed = true
+                    timeRemaining = breakTime
+                }
+            }
+        }
+        .onReceive(breakTimer) { time in
+            guard completed else { return }
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            } else {
+                withAnimation {
+                    completed = false
+                    focused = false
+                    timeRemaining = focusTime
+                }
+            }
+        }
     }
 }
 
 #Preview {
     
-    @Previewable @State var pomodoroTime = 20
-    @Previewable @State var timeRemaining = 20
     @Previewable @State var focused = false
+    @Previewable @State var completed = false
     
-    TimerView(pomodoroTime: $pomodoroTime, timeRemaining: $timeRemaining, focused: $focused)
+    VStack {
+        TimerView(focused: $focused, completed: $completed)
+    }.background(Color.BACKGROUND)
 }
