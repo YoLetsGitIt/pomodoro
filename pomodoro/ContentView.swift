@@ -24,7 +24,7 @@ struct ContentView: View {
     let breakTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var focusType = ["focus", "study", "exercise", "read"]
-    @State private var selectedFocusType = "focus"
+    @State private var selectedFocusTypeIndex = 0
     
     var body: some View {
         ZStack {
@@ -40,9 +40,11 @@ struct ContentView: View {
                 TimerView(pomodoroTime: !completed ? $pomodoroTime : $breakTime, timeRemaining: !completed ? $timeRemaining : $breakTimeRemaining, focused: $focused)
                 if !focused {
                     Button {
-                    focusTypeSelectionModal.toggle()
+                        withAnimation {
+                            focusTypeSelectionModal.toggle()
+                        }
                 } label: {
-                    Text(selectedFocusType + " >")
+                    Text(focusType[selectedFocusTypeIndex] + " >")
                         .foregroundColor(.white)
                 }
                 }
@@ -54,6 +56,7 @@ struct ContentView: View {
             VStack {
                 if !focused {
                     Spacer()
+                    Spacer()
                     Button {
                         withAnimation {
                             focused = true
@@ -63,6 +66,7 @@ struct ContentView: View {
                             .sensoryFeedback(.start, trigger: focused == true)
                     }
                     .padding()
+                    Spacer()
                 } else {
                     Spacer()
                     if !completed {
@@ -98,18 +102,33 @@ struct ContentView: View {
                 }
             }
         }
+        .blur(radius: focusTypeSelectionModal ? 20 : 0)
         .sheet(isPresented: $focusTypeSelectionModal) {
             ZStack {
                 Color.BACKGROUND.edgesIgnoringSafeArea(.all)
             VStack {
-                Picker("Please choose a color", selection: $selectedFocusType) {
-                     ForEach(focusType, id: \.self) {
-                         Text($0)
-                     }
-                 }
+                Spacer()
+                Text("Select focus type")
+                    .foregroundStyle(.white)
+                Spacer()
+                LazyVGrid(columns: [
+                    GridItem(.adaptive(minimum: 150))
+                ], spacing: 20) {
+                    ForEach(focusType.indices, id: \.self) { index in
+                        MultiPicker(pickerText: focusType[index], selected: index == selectedFocusTypeIndex, onPress: {
+                                withAnimation {
+                                    selectedFocusTypeIndex = index
+                                    focusTypeSelectionModal.toggle()
+                                }
+                            })
+                    }
+                }
+                .padding(.horizontal)
+                Spacer()
             }
-            .presentationDetents([.medium])
+            .presentationDetents([.height(250)])
             .presentationDragIndicator(.visible)
+            .presentationBackground(.ultraThickMaterial)
             }
         }
         .onReceive(pomodoroTimer) { time in
