@@ -7,7 +7,27 @@
 
 import SwiftUI
 
+struct BlinkViewModifier: ViewModifier {
+    
+    let duration: Double
+    @State var blinking: Bool = false
+    
+    func body(content: Content) -> some View {
+        content
+            .opacity(blinking ? 0.75 : 1)
+            .animation(.easeOut(duration: duration).repeatForever(), value: blinking)
+            .onAppear {
+                withAnimation {
+                    blinking = true
+                }
+            }
+    }
+}
+
 struct ContentView: View {
+    
+    let tutorialCompleted = UserDefaults.standard.bool(forKey: "tutorialCompleted")
+    @State var tutorialStep = 0
     
     @GestureState private var isDetectingLongPress = false
     
@@ -94,6 +114,101 @@ struct ContentView: View {
                 }
             }
         }
+        .overlay {
+            if !tutorialCompleted && tutorialStep < 5 {
+                    ZStack {
+                        VStack {
+                            if (tutorialStep == 0) {
+                                ZStack {
+                                    Color(white: 0, opacity: 0.9).ignoresSafeArea()
+                                    VStack {
+                                        Spacer()
+                                        Text("Thank you for downloading pomodoro!\n\nThis is a quick guide to show how to use the app")
+                                            .multilineTextAlignment(.center)
+                                            .padding()
+                                            .background(.white)
+                                            .cornerRadius(15)
+                                            .padding(.horizontal, 40)
+                                            .padding(.bottom, 16)
+                                        Button {
+                                            withAnimation {
+                                                tutorialStep = tutorialStep + 1
+                                            }
+                                        } label: {
+                                            PomodoroButton(buttonText: "Next", fullWidth: true)
+                                                .padding(.horizontal, 40)
+                                                .padding(.bottom, 8)
+                                            
+                                        }
+                                        Button {
+                                            UserDefaults.standard.set(false, forKey: "tutorialCompleted")
+                                            withAnimation {
+                                                 tutorialStep = 6
+                                            }
+                                        } label: {
+                                            PomodoroButton(buttonText: "Skip", fullWidth: true)
+                                                .padding(.horizontal, 40)
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            if (tutorialStep == 1) {
+                                ZStack {
+                                    Color(white: 0, opacity: 0.75).ignoresSafeArea()
+                                    VStack {
+                                        Spacer()
+                                        Text("This is the button to start your pomodoro timer")
+                                            .multilineTextAlignment(.center)
+                                            .padding()
+                                            .background(.white)
+                                            .cornerRadius(15)
+                                            .padding(.horizontal, 40)
+                                        Spacer()
+                                    }
+                                    VStack {
+                                        Spacer()
+                                        Spacer()
+                                        Button {
+                                            withAnimation {
+                                                tutorialStep = tutorialStep + 1
+                                                withAnimation {
+                                                    focused = true
+                                                }
+                                            }
+                                        } label: {
+                                            PomodoroButton(buttonText: "start focus", blinkingAnimation: true)
+                                                .modifier(BlinkViewModifier(duration: 0.5))
+                                                .sensoryFeedback(.start, trigger: focused == true)
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            if (tutorialStep == 2) {
+                                ZStack {
+                                    VStack {
+                                        Text("long hold to cancel focus")
+                                            .multilineTextAlignment(.center)
+                                            .modifier(PopoutViewModifier(duration: 0.5, on: true))
+                                            .padding()
+                                            .background(.white)
+                                            .cornerRadius(15)
+                                            .padding(.horizontal, 40)
+                                            .padding(.top, 40)
+                                            .modifier(BlinkViewModifier(duration: 0.5))
+                                            
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            if (tutorialStep == 3) {
+                                
+                            }
+                        }
+                    }
+            }
+        }
         .blur(radius: showFocusTypePickerSheet ? 20 : 0)
         .sheet(isPresented: $showFocusTypePickerSheet) {
             FocusTypePickerSheet(focusType: focusType, selectedFocusTypeIndex: $selectedFocusTypeIndex, showFocusTypePickerSheet: $showFocusTypePickerSheet)
@@ -118,6 +233,7 @@ struct ContentView: View {
                                 stopPressing = false
                                 stopCounter = 0
                             }
+                            tutorialStep = tutorialStep + 1
                             timer.invalidate() // invalidate the timer
                         } else {
                             withAnimation {
