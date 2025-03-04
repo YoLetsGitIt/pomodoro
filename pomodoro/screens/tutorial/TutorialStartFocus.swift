@@ -16,7 +16,6 @@ struct TutorialStartFocus: View {
         ZStack {
             Color(white: 0, opacity: 0.75).ignoresSafeArea()
             VStack {
-                Spacer()
                 Text("This is the button to start your pomodoro timer")
                     .multilineTextAlignment(.center)
                     .padding()
@@ -25,6 +24,7 @@ struct TutorialStartFocus: View {
                     .padding(.horizontal, 40)
                 Spacer()
             }
+            .padding(.top)
             VStack {
                 Spacer()
                 Spacer()

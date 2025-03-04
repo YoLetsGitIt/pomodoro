@@ -19,44 +19,22 @@ struct CustomFrameModifier : ViewModifier {
     }
 }
 
-struct PopoutViewModifier: ViewModifier {
-    
-    let duration: Double
-    let on: Bool
-    @State var blinking: Bool = false
-    
-    func body(content: Content) -> some View {
-        if (on) {
-            content
-                .padding(blinking ? 0 : 4)
-                .animation(.easeOut(duration: duration).repeatForever(), value: blinking)
-                .onAppear {
-                    withAnimation {
-                        blinking = true
-                    }
-                }
-        } else {
-            content
-        }
-       
-    }
-}
-
 struct PomodoroButton: View {
     
     var buttonText: String
+    var type: String = "main"
     var fullWidth: Bool = false
     var blinkingAnimation: Bool = false
     
     var body: some View {
         VStack {
             Text(buttonText)
-                .foregroundStyle(.BACKGROUND)
+                .foregroundStyle(type == "main" ? .BACKGROUND : .white)
                 .padding()
                 .padding(.horizontal)
                 .modifier(PopoutViewModifier(duration: 0.5, on: blinkingAnimation))
                 .modifier(CustomFrameModifier(fullWidth: fullWidth))
-                .background(.white)
+                .background(type == "main" ? .white : .BACKGROUND)
                 .clipShape(.capsule)
         }
     }
