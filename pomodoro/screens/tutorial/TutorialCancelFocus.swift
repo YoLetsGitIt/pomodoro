@@ -12,7 +12,7 @@ struct TutorialCancelFocus: View {
     var body: some View {
         ZStack {
             VStack {
-                Text("long hold to cancel focus")
+                Text("keep your finger on the screen to cancel focus")
                     .multilineTextAlignment(.center)
                     .padding()
                     .background(.white)

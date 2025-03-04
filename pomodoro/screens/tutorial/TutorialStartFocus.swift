@@ -22,6 +22,7 @@ struct TutorialStartFocus: View {
                     .background(.white)
                     .cornerRadius(15)
                     .padding(.horizontal, 40)
+                    .modifier(PopoutViewModifier(duration: 0.5, on: true))
                 Spacer()
             }
             .padding(.top)
