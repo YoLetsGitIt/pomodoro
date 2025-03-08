@@ -19,7 +19,7 @@ struct ContentView: View {
     @State private var stopCounter = 0.0
     @State private var completed = false {
         didSet {
-                showCongratulations = true
+            showCongratulations = true
         }
     }
     @State private var showCongratulations = false
@@ -34,27 +34,17 @@ struct ContentView: View {
                 .ignoresSafeArea()
             VStack {
                 Spacer()
-                if completed {
-                    Text("break time")
-                        .padding(.bottom)
-                        .foregroundStyle(.WHITE)
-                }
+//                if completed {
+//                    Text("break time")
+//                        .padding(.bottom)
+//                        .foregroundStyle(.WHITE)
+//                }
                 if !showCongratulations {
                     TimerView(focused: $focused, completed: $completed)
                 }
                 if showCongratulations {
                     FocusSuccess(showCongratulations: $showCongratulations)
                 }
-//                if !focused {
-//                    Button {
-//                        withAnimation {
-//                            showFocusTypePickerSheet.toggle()
-//                        }
-//                } label: {
-//                    Text(focusType[selectedFocusTypeIndex] + " >")
-//                        .foregroundColor(.WHITE)
-//                }
-//                }
                 if (!focused) {
                     Spacer()
                 }

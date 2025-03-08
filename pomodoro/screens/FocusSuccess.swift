@@ -16,27 +16,39 @@ struct FocusSuccess: View {
         ZStack {
             Color(.BACKGROUND)
                 .ignoresSafeArea()
-            VStack {
-                Text("Horray!")
-                    .foregroundStyle(.WHITE)
-                Text("You've completed a focus time of x minutes!")
-                    .foregroundStyle(.WHITE)
-                Button {
-                    withAnimation {
-                        showCongratulations = false
+            HStack {
+                Spacer()
+                VStack {
+                    Text("Horray!")
+                        .foregroundStyle(.WHITE)
+                        .font(.custom("RedditMono-Bold", size: 20))
+                    Text("You've completed a pomodoro cycle!")
+                        .foregroundStyle(.WHITE)
+                        .font(.custom("RedditMono-Bold", size: 20))
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    Button {
+                        withAnimation {
+                            showCongratulations = false
+                        }
+                    } label: {
+                        PomodoroButton(buttonText: "Done")
                     }
-                } label: {
-                    PomodoroButton(buttonText: "Done")
+                    
                 }
-                
+                .padding()
+                .background(.GREY_1)
+                .cornerRadius(16)
+                Spacer()
             }
-            .background(.GREY_1)
-            .cornerRadius(16)
         }
         .displayConfetti(isActive: $showConfetti)
     }
 }
 
 #Preview {
-//    FocusSuccess()
+    
+    @Previewable @State var showCongratulations: Bool = true
+    
+    FocusSuccess(showCongratulations: $showCongratulations)
 }
