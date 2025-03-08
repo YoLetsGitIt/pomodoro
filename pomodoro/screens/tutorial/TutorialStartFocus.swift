@@ -19,7 +19,7 @@ struct TutorialStartFocus: View {
                 Text("This is the button to start your pomodoro timer")
                     .multilineTextAlignment(.center)
                     .padding()
-                    .background(.white)
+                    .background(.WHITE)
                     .cornerRadius(15)
                     .padding(.horizontal, 40)
                     .modifier(PopoutViewModifier(duration: 0.5, on: true))

@@ -32,7 +32,7 @@ struct ContentView: View {
                 if completed {
                     Text("break time")
                         .padding(.bottom)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.WHITE)
                 }
                 TimerView(focused: $focused, completed: $completed)
                 if !focused {
@@ -42,7 +42,7 @@ struct ContentView: View {
                         }
                 } label: {
                     Text(focusType[selectedFocusTypeIndex] + " >")
-                        .foregroundColor(.white)
+                        .foregroundColor(.WHITE)
                 }
                 }
                 if (!focused) {
@@ -72,15 +72,15 @@ struct ContentView: View {
                                 Rectangle()
                                     .frame(width: 200, height: 5)
                                     .opacity(0.3)
-                                    .foregroundColor(.GREY_1)
+                                    .foregroundColor(.GREY_2)
                                 Rectangle()
                                     .frame(width: stopCounter * 100, height: 5)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.WHITE)
                                     .animation(.easeInOut, value: stopCounter)
                             }
                         }
                         Text("hold to stop focus")
-                            .foregroundStyle(stopPressing ? .white : .GREY_1)
+                            .foregroundStyle(stopPressing ? .WHITE : .GREY_2)
                             .padding(.top)
                             .font(.system(size: stopPressing ? 14 : 16))
                             .sensoryFeedback(.stop, trigger: focused == false)

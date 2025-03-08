@@ -29,12 +29,12 @@ struct PomodoroButton: View {
     var body: some View {
         VStack {
             Text(buttonText)
-                .foregroundStyle(type == "main" ? .BACKGROUND : .white)
+                .foregroundStyle(type == "main" ? .BACKGROUND : .WHITE)
                 .padding()
                 .padding(.horizontal)
                 .modifier(PopoutViewModifier(duration: 0.5, on: blinkingAnimation))
                 .modifier(CustomFrameModifier(fullWidth: fullWidth))
-                .background(type == "main" ? .white : .BACKGROUND)
+                .background(type == "main" ? .WHITE : .BACKGROUND)
                 .clipShape(.capsule)
         }
     }

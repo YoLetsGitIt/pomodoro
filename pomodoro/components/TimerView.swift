@@ -70,7 +70,7 @@ struct TimerView: View {
                 Circle()
                     .trim(from: 0, to: CGFloat((Float(completed ? breakTime : focusTime) - Float(timeRemaining)) / Float(completed ? breakTime : focusTime)))
                     .stroke(
-                        .white,
+                        .WHITE,
                         style: StrokeStyle(
                             lineWidth: 15,
                             lineCap: .round
@@ -81,7 +81,7 @@ struct TimerView: View {
                     .animation(.easeOut, value: CGFloat((Float(completed ? breakTime : focusTime) - Float(timeRemaining)) / Float(completed ? breakTime : focusTime)))
             }
             Text("\(convertDurationToString())")
-                .foregroundStyle(.white)
+                .foregroundStyle(.WHITE)
                 .font(.custom(
                             "Helvetica",
                             size: focused ? 64 : 96,

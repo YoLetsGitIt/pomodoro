@@ -32,7 +32,7 @@ struct Welcome: View {
             VStack {
                 Spacer()
                 Text("Welcome to")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.WHITE)
                     .font(.custom("RedditMono-Bold", size: 24))
                     .bold()
                     .multilineTextAlignment(.center)
@@ -45,7 +45,7 @@ struct Welcome: View {
                         }
                     }
                 Text(text)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.WHITE)
                     .font(.custom("RedditMono-Bold", size: 32))
                     .bold()
                     .multilineTextAlignment(.center)
