@@ -72,7 +72,7 @@ struct ContentView: View {
                                 Rectangle()
                                     .frame(width: 200, height: 5)
                                     .opacity(0.3)
-                                    .foregroundColor(.SECONDARY)
+                                    .foregroundColor(.GREY_1)
                                 Rectangle()
                                     .frame(width: stopCounter * 100, height: 5)
                                     .foregroundColor(.white)
@@ -80,7 +80,7 @@ struct ContentView: View {
                             }
                         }
                         Text("hold to stop focus")
-                            .foregroundStyle(stopPressing ? .white : .SECONDARY)
+                            .foregroundStyle(stopPressing ? .white : .GREY_1)
                             .padding(.top)
                             .font(.system(size: stopPressing ? 14 : 16))
                             .sensoryFeedback(.stop, trigger: focused == false)
@@ -111,7 +111,7 @@ struct ContentView: View {
                                TutorialCancelFocus()
                             }
                             if (tutorialStep == 3) {
-                                
+                                TutorialFinished(tutorialStep: $tutorialStep)
                             }
                         }
                     }
@@ -141,8 +141,10 @@ struct ContentView: View {
                                 stopPressing = false
                                 stopCounter = 0
                             }
-                            tutorialStep = tutorialStep + 1
-                            timer.invalidate() // invalidate the timer
+                            withAnimation {
+                                tutorialStep = tutorialStep + 1
+                                timer.invalidate() // invalidate the timer
+                            }
                         } else {
                             withAnimation {
                                 stopCounter += 0.1

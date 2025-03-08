@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-extension String {
-    subscript(offset: Int) -> Character {
-        self[index(startIndex, offsetBy: offset)]
-    }
-}
-
 struct Welcome: View {
     
     let finalText: String = "p o m o d o r o"
@@ -20,10 +14,11 @@ struct Welcome: View {
     @Binding var tutorialStep: Int
     @State var text: String = ""
     @State var showButtons: Bool = false
+    @State var welcomeToOpacity: Double = 0
     
     func typeWriter(at position: Int = 0) {
       if position < finalText.count {
-        // Run the code inside the DispatchQueue after 0.2s
+        // Run the code inside the DispatchQueue after 0.1s
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 text.append(finalText[position])
                 typeWriter(at: position + 1)
@@ -43,6 +38,12 @@ struct Welcome: View {
                     .multilineTextAlignment(.center)
                     .monospacedDigit()
                     .padding(.bottom)
+                    .opacity(welcomeToOpacity)
+                    .onAppear {
+                        withAnimation {
+                            welcomeToOpacity = 1
+                        }
+                    }
                 Text(text)
                     .foregroundStyle(.white)
                     .font(.custom("RedditMono-Bold", size: 32))
@@ -82,6 +83,6 @@ struct Welcome: View {
                 }
             }
         }
-        .onAppear(perform: {typeWriter()})
+        .onAppear(perform: {DispatchQueue.main.asyncAfter(deadline: .now() + 1) {typeWriter()}})
     }
 }

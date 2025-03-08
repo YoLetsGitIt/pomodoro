@@ -62,7 +62,7 @@ struct TimerView: View {
             if focused {
                 Circle()
                     .stroke(
-                        .SECONDARY,
+                        .GREY_2,
                         lineWidth: 15
                     )
             }
