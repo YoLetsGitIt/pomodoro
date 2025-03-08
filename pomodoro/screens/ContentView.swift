@@ -34,11 +34,6 @@ struct ContentView: View {
                 .ignoresSafeArea()
             VStack {
                 Spacer()
-//                if completed {
-//                    Text("break time")
-//                        .padding(.bottom)
-//                        .foregroundStyle(.WHITE)
-//                }
                 if !showCongratulations {
                     TimerView(focused: $focused, completed: $completed)
                 }
@@ -65,6 +60,11 @@ struct ContentView: View {
                     .padding()
                     Spacer()
                 } else {
+                    if completed {
+                        Text("break time")
+                            .padding(.bottom)
+                            .foregroundStyle(.WHITE)
+                    }
                     Spacer()
                     if !completed {
                         if stopPressing {
@@ -91,8 +91,9 @@ struct ContentView: View {
                                 focused = false
                             }
                         } label: {
-                            PomodoroButton(buttonText: "end break")
+                            PomodoroButton(buttonText: "stop break")
                         }
+
                     }
                 }
             }

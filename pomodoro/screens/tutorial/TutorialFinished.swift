@@ -29,6 +29,7 @@ struct TutorialFinished: View {
         .onTapGesture {
             withAnimation {
                 tutorialStep += 1
+                UserDefaults.standard.set(true, forKey: "tutorialCompleted")
             }
         }
     }

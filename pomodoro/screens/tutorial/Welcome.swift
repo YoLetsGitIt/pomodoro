@@ -67,6 +67,7 @@ struct Welcome: View {
                         UserDefaults.standard.set(false, forKey: "tutorialCompleted")
                         withAnimation {
                             tutorialStep = 6
+                            UserDefaults.standard.set(true, forKey: "tutorialCompleted")
                         }
                     } label: {
                         PomodoroButton(buttonText: "Skip", type: "secondary", fullWidth: true)
