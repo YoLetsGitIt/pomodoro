@@ -12,14 +12,14 @@ struct TimerView: View {
     @Binding var focused: Bool
     @Binding var completed: Bool
     
-    @State var focusTime: Int = 1500
+    @State var focusTime: Int = 2
     @State private var breakTime = 300
     @State var timeRemaining: Int
     
     init(focused: Binding<Bool>, completed: Binding<Bool>) {
         self._focused = focused
         self._completed = completed
-        self.timeRemaining = completed.wrappedValue ? 300 : 1500
+        self.timeRemaining = completed.wrappedValue ? 300 : 2
     }
     
     let pomodoroTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()

@@ -17,7 +17,12 @@ struct ContentView: View {
     @State private var focused = false
     @State private var stopPressing = false
     @State private var stopCounter = 0.0
-    @State private var completed = false
+    @State private var completed = false {
+        didSet {
+                showCongratulations = true
+        }
+    }
+    @State private var showCongratulations = false
     @State private var showFocusTypePickerSheet = false
     
     var focusType = ["focus", "study", "exercise", "read"]
@@ -34,23 +39,28 @@ struct ContentView: View {
                         .padding(.bottom)
                         .foregroundStyle(.WHITE)
                 }
-                TimerView(focused: $focused, completed: $completed)
-                if !focused {
-                    Button {
-                        withAnimation {
-                            showFocusTypePickerSheet.toggle()
-                        }
-                } label: {
-                    Text(focusType[selectedFocusTypeIndex] + " >")
-                        .foregroundColor(.WHITE)
+                if !showCongratulations {
+                    TimerView(focused: $focused, completed: $completed)
                 }
+                if showCongratulations {
+                    FocusSuccess(showCongratulations: $showCongratulations)
                 }
+//                if !focused {
+//                    Button {
+//                        withAnimation {
+//                            showFocusTypePickerSheet.toggle()
+//                        }
+//                } label: {
+//                    Text(focusType[selectedFocusTypeIndex] + " >")
+//                        .foregroundColor(.WHITE)
+//                }
+//                }
                 if (!focused) {
                     Spacer()
                 }
                 Spacer()
             }
-            VStack {
+            if !showCongratulations { VStack {
                 if !focused {
                     Spacer()
                     Spacer()
@@ -95,6 +105,7 @@ struct ContentView: View {
                         }
                     }
                 }
+            }
             }
         }
         .overlay {

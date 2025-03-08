@@ -19,7 +19,7 @@ struct TutorialFinished: View {
                 Text("Congratulations, you've finished the tutorial!")
                     .multilineTextAlignment(.center)
                     .padding()
-                    .background(.white)
+                    .background(.WHITE)
                     .cornerRadius(15)
                     .padding(.horizontal, 40)
                     .modifier(PopoutViewModifier(duration: 0.5, on: true))
